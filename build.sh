@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t mqtt-benchmark:latest .
+docker build --force-rm  -t mqtt-benchmark:latest .
