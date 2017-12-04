@@ -1,4 +1,4 @@
-FROM golang:1.8
+FROM golang:alpine
 MAINTAINER Lazar Obradovic <laz.obradovic@gmail.com>
 
 ENV TARGETHOST="127.0.0.1"
