@@ -44,7 +44,7 @@ for clients in 1 2 4 8 16 32 64 128 256 512 1024 2048; do
       echo -n " ... waiting for DUT to cool off"
       snmp_load=`snmpget -v2c -c public -O q $TARGETHOST laLoadInt.1 | awk '{ print $2}'`
       until [ $snmp_initload -ge $snmp_load ]; do
-        sleep 10s
+        sleep 20s
         echo -n "."
         snmp_load=`snmpget -v2c -c public -O q $TARGETHOST laLoadInt.1 | awk '{ print $2}'`
       done

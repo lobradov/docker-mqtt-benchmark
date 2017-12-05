@@ -7,9 +7,6 @@ if [[ ! -z $1 ]]; then
   TARGETHOST=$1
 fi
 
-if [ ! -d `pwd`/results ]; then
-  echo No results directory here. Please create one - EXITING.
-  exit
-fi
+mkdir -p `pwd`/results/${TARGETHOST}
 
-docker run -it --rm -e TARGETHOST=$TARGETHOST -v `pwd`/results:/results mqtt-benchmark:latest
+docker run -it --rm -e TARGETHOST=${TARGETHOST} -v `pwd`/results:/results mqtt-benchmark:latest
