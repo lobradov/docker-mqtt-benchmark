@@ -9,4 +9,4 @@ fi
 
 mkdir -p `pwd`/results/${TARGETHOST}
 
-docker run -it --rm -e TARGETHOST=${TARGETHOST} -v `pwd`/results:/results mqtt-benchmark:latest
+docker run -it --rm -e TARGETHOST=${TARGETHOST} -v `pwd`/results${TARGETHOST}:/results mqtt-benchmark:latest
