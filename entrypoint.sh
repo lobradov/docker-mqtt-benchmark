@@ -26,7 +26,7 @@ fi
 
 echo "INFO: Starting benchmark"
 
-for clients in 1 2 4 8 16 32 64 128 256 512 1024 2048; do
+for clients in 2 4 8 16 32 64 128 256 512 1024 2048; do
   for size in 10 20 40 80 160 320 640; do
     echo -n "INFO: Testing with $clients client(s) and packet size of $size..."
     if [ -s /results/results-$clients-$size.json ]; then
