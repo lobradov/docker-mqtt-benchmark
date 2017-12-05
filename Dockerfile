@@ -5,6 +5,9 @@ ENV TARGETHOST="127.0.0.1"
 RUN apk add --update --virtual build-dependencies \
   git
 
+RUN apk add --update \
+  net-snmp-tools
+
 RUN go get github.com/krylovsk/mqtt-benchmark
 
 RUN apk del build-dependencies \

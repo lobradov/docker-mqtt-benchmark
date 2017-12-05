@@ -7,11 +7,26 @@ if [ -z ${TARGETHOST} ]; then
   exit
 fi
 
-echo "Starting benchmark"
+if snmpget -v2c -c public -O q $TARGETHOST laLoadInt.1 > /dev/null; then
+  # SNMP available, good.
+  snmp_available=1
+  snmp_initload=`snmpget -v2c -c public -O q $TARGETHOST laLoadInt.1 | awk '{ print $2}'`
+  if [ $snmp_initload -ge 20 ]; then
+    echo "ERROR: DUT load too high ($snmp_initload %) - try again later."
+    exit
+  fi
+  echo "INFO: DUT CPU load is $snmp_initload %"
+  sleep 5s
+else
+  snmpavailable=0
+  # Sleep using backoff algo.
+fi
+
+echo "INFO: Starting benchmark"
 
 for clients in 1 2 4 8 16 32 64 128 256 512 1024 2048; do
   for size in 10 20 40 80 160 320 640; do
-    echo -n "Testing with $clients clients and packet size of $size..."
+    echo -n "INFO: Testing with $clients clients and packet size of $size..."
     if [ -s /results/results-$clients-$size.json ]; then
       echo "existing, SKIPPED"
       continue
@@ -22,9 +37,21 @@ for clients in 1 2 4 8 16 32 64 128 256 512 1024 2048; do
       echo "FAILED, exiting!"
       exit
     fi
-    sleeptime=$((15 + clients/32 + size/10))
-    echo -n "finished!... sleeping $sleeptime..."
-    sleep $sleeptime
-    echo "DONE!"
+    echo -n "finished!"
+    if [ $snmp_available -eq 1 ]; then
+      echo -n " ... waiting for DUT to cool off"
+      snmp_load=`snmpget -v2c -c public -O q $TARGETHOST laLoadInt.1 | awk '{ print $2}'`
+      until [ $snmp_initload -ge $snmp_load ]; do
+        sleep 10s
+        echo -n "."
+        snmp_load=`snmpget -v2c -c public -O q $TARGETHOST laLoadInt.1 | awk '{ print $2}'`
+      done
+      echo "DONE!"
+    else
+      sleeptime=$((15 + clients/32 + size/10))
+      echo -n "... sleeping $sleeptime..."
+      sleep $sleeptime
+      echo "DONE!"
+    fi
   done
 done
