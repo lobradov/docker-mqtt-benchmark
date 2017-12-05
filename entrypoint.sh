@@ -22,8 +22,9 @@ for clients in 1 2 4 8 16 32 64 128 256 512 1024 2048; do
       echo "FAILED, exiting!"
       exit
     fi
-    echo -n "finished!... sleeping 15s..."
-    sleep 15s
+    sleeptime=$((15 + clients/32 + size/10))
+    echo -n "finished!... sleeping $sleeptime..."
+    sleep $sleeptime
     echo "DONE!"
   done
 done
