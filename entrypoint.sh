@@ -33,7 +33,14 @@ for clients in 2 4 8 16 32 64 128 256 512 1024 2048; do
       echo "existing, SKIPPED"
       continue
     fi
-    mqtt-benchmark -broker tcp://$TARGETHOST:1883 -clients $clients -size $size -count 5000 -quiet -format json > /results/results-$clients-$size.json
+    if [[ ${clients} -le 64 ]]; then
+      count=5000
+    elif [[ ${clients} -le 256 ]]; then
+      count=2000
+    else
+      count=500
+    fi
+    mqtt-benchmark -broker tcp://$TARGETHOST:1883 -clients $clients -size $size -count ${count} -quiet -format json > /results/results-$clients-$size.json
     if [ $? -ne 0 ]; then
       rm /results/results-$clients-$size.json
       echo "FAILED, exiting!"
